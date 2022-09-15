@@ -1,7 +1,7 @@
 ---
 - id: gitlab-codeowners-linter
   name: lint Gitlab's CODEOWNERS file
-  description: check that the CODEOWNERS file is well formatted
+  description: check that the Gitlab's CODEOWNERS file is well formatted
   entry: gitlab-codeowners-linter
   language: python
   files: ^(CODEOWNERS|.gitlab/CODEOWNERS|docs/CODEOWNERS)

@@ -145,7 +145,8 @@ class OwnersList:
                     if entry.comments:
                         for comment_line in entry.comments:
                             f.write(f'{str(comment_line)}\n')
-                    f.write(f'{entry.path}\n')
+                    owners = ' '.join(str(x) for x in entry.owners)
+                    f.write(f'{entry.path} {owners}\n')
         return
 
     def parse_codeowners(self):
@@ -196,7 +197,8 @@ class OwnersList:
                 continue
             # if we arrive here it means we have a new entry
             codeowners_content[-1].entries.append(
-                CodeownerEntry(line.rstrip(), comments_block),
+                CodeownerEntry(line.rstrip().split()[
+                               0], comments_block, line.rstrip().split()[1:]),
             )
             comments_block = []
 
