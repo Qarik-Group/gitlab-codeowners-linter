@@ -8,11 +8,11 @@
 
 # this is a comment for *.md test@email.com
 *.md test@email.com
-* test@email.com
+* test@email.com test1@email.com test2@email.com test3@email.com
 # this is a comment
 /.pylintrc test@email.com
-WORKSPACE test@email.com
-/WORKSPACE test@email.com
+WORKSPACE test@email.com test1@email.com test2@email.com test3@email.com
+/WORKSPACE test@email.com test1@email.com test2@email.com test3@email.com
 /analytics/ test@email.com
 /go/src/github.com/test/base/sync/ test@email.com
 
@@ -28,13 +28,13 @@ WORKSPACE test@email.com
 /www/gitlab/test/path test@email.com
 /ui/components/ test@email.com
 .gitlab test@email.com
-/ui test@email.com
+/ui test@email.com test1@email.com test2@email.com test3@email.com
 
 # Build Group
 [BUILD] #this is a comment
-CODEOWNERS @test/teams/build/admin test@email.com
+CODEOWNERS @test/teams/build/admin test@email.com test1@email.com test2@email.com test3@email.com
 .gitlab/.gitlab-ci.yml test@email.com
-.gitlab/ci/ test@email.com
+.gitlab/ci/ test@email.com test1@email.com test2@email.com test3@email.com
 
 /ops/gitlab/ test@email.com
 
@@ -46,7 +46,7 @@ CODEOWNERS @test/teams/build/admin test@email.com
 
 /go/src/repo/pipeline/ test@email.com
 /ops/terraform/pipeline/ test@email.com
-/pipeline/ test@email.com
+/pipeline/ test@email.com test1@email.com test2@email.com test3@email.com
 /docker/pipeline/ test@email.com
 /release/release_script.sh test@email.com
 
@@ -63,7 +63,7 @@ CODEOWNERS @test/teams/build/admin test@email.com
 # This is a comment for [TEST_SECTION]
 
 /go/src/repo/pipeline/ test@email.com
-/ops/terraform/pipeline/ test@email.com
+/ops/terraform/pipeline/ test@email.com test1@email.com test2@email.com test3@email.com
 /pipeline/ test@email.com
 /docker/pipeline/ test@email.com
 /release/release_script.sh test@email.com
