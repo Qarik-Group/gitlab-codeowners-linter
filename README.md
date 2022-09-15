@@ -28,11 +28,11 @@ You can use this linter with `pre-commit` by adding the following hook in your `
 ```yaml
 repos:
 - repo:  https://github.com/Qarik-Group/gitlab-codeowners-linter
-  rev: v0.0.1
+  rev: v0.0.3
   hooks:
   - id:  gitlab-codeowners-linter
     args: ['--codeowners_file=path/to/your/CODEOWNERS/file']
 ```
 
 ## What's down the pipeline
-* Check that all paths under a section are unique
+* Check that paths exist
