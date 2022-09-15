@@ -57,6 +57,9 @@ class OwnersList:
     def check(self):
         violations = []
 
+        if self.is_codeowners_empty():
+            return violations
+
         # Are custom section names sorted?
         if [
             section.codeowner_section for section in self.codeowners_data[1:]
@@ -114,6 +117,13 @@ class OwnersList:
         if self.autofix:
             self.update_codeowners_file()
         return violations
+
+    def is_codeowners_empty(self):
+        empty = False
+        for section in self.codeowners_data:
+            if not section.get_paths():
+                empty = True
+        return empty
 
     def get_sections_with_blank_lines(self):
         sections_with_blank_lines = []
@@ -204,8 +214,9 @@ class OwnersList:
 
         # before returning, let's normalize the data by removing the trailing empty line at the end of every section
         for section in codeowners_content:
-            if self.is_empty_line(section.entries[-1].path):
-                section.entries = section.entries[:-1]
+            if section.entries:
+                if self.is_empty_line(section.entries[-1].path):
+                    section.entries = section.entries[:-1]
 
         return codeowners_content
 

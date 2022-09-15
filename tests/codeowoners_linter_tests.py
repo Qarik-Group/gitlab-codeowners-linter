@@ -138,7 +138,6 @@ class Test(unittest.TestCase):
                     'resources/formatted_autofix.txt',
                 ),
             ),
-            # TODO: add test case for empty file once we can manage it
             TestCase(
                 name='not_formatted',
                 input=os.path.join(
@@ -153,6 +152,18 @@ class Test(unittest.TestCase):
                 expected_fix=os.path.join(
                     os.path.dirname(os.path.abspath(__file__)),
                     'resources/unformatted_autofix.txt',
+                ),
+            ),
+            TestCase(
+                name='empty_file',
+                input=os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)),
+                    'resources/empty_input.txt',
+                ),
+                expected_check=[],
+                expected_fix=os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)),
+                    'resources/empty_autofix.txt',
                 ),
             ),
         ]
