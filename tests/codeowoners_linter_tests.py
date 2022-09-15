@@ -32,7 +32,7 @@ class Test(unittest.TestCase):
 
         testcases = [
             TestCase(
-                name='empty_slice',
+                name='unsorted',
                 input=[
                     '*.md test@email.com',
                     '.gitlab test@email.com',
@@ -46,7 +46,9 @@ class Test(unittest.TestCase):
                     '/WORKSPACE test@email.com',
                     '/www/ test@email.com',
                     '/www/gitlab/test/pa test@email.com #this is a comment',
+                    '/www/**/*.md test@email.com',
                     r'\#file_with_pound.rb test@email.com',
+                    '/www/* test@email.com',
                 ],
                 expected=[
                     '* test@email.com',
@@ -61,6 +63,8 @@ class Test(unittest.TestCase):
                     '/ui/lighting/client test@email.com',
                     '/WORKSPACE test@email.com',
                     '/www/ test@email.com',
+                    '/www/* test@email.com',
+                    '/www/**/*.md test@email.com',
                     '/www/gitlab/test/pa test@email.com #this is a comment',
                 ],
             ),
@@ -149,6 +153,7 @@ class Test(unittest.TestCase):
                     'Sections are not sorted',
                     'There are blank lines in the sections __default_codeowner_section__, BUILD, SECURITY',
                     'The paths in sections __default_codeowner_section__, BUILD, SYSTEM, TEST_SECTION are not sorted',
+                    'The sections __default_codeowner_section__ have duplicate paths',
                 ],
                 expected_fix=os.path.join(
                     os.path.dirname(os.path.abspath(__file__)),
