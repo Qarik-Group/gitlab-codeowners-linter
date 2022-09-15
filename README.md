@@ -5,6 +5,7 @@ Keep your [Gitlab's CODEOWNERS file](https://docs.gitlab.com/ee/user/project/cod
 gitlab-codeowners-linter makes sure that the CODEOWNERS file is formatted respecting the following rules:
   - every section must be sorted alphabetically
   - within a section, paths must be ordered alphabetically
+  - paths in a section must be unique
   - there must be no empty lines between paths
 
 The linter can run in check or autofix mode.

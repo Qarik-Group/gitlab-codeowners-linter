@@ -114,6 +114,32 @@ class OwnersList:
 
                 self.codeowners_data = codeowners_data_updated
 
+        # Are there duplicated paths?
+        sections_with_duplicate_paths = self.get_sections_with_duplicate_paths()
+        if sections_with_duplicate_paths != []:
+            violations.append(
+                f"The sections {', '.join(map(str, sections_with_duplicate_paths))} have duplicate paths",
+            )
+            if self.autofix:
+                codeowners_updated = []
+                for section in self.codeowners_data:
+                    codeowners_updated.append(section)
+                    if section.codeowner_section not in sections_with_duplicate_paths:
+                        continue
+                    updated_entries = []
+                    for entry in section.entries:
+                        if updated_entries == []:
+                            updated_entries.append(entry)
+                            continue
+                        if entry.path == updated_entries[-1].path:
+                            # we have a duplicate
+                            updated_entries[-1].comments.extend(entry.comments)
+                            updated_entries[-1].owners.extend(entry.owners)
+                            continue
+                        updated_entries.append(entry)
+                        codeowners_updated[-1].entries = updated_entries
+                self.codeowners_data = codeowners_updated
+
         if self.autofix:
             self.update_codeowners_file()
         return violations
@@ -139,6 +165,13 @@ class OwnersList:
             if sorted(section.entries, key=sort_paths_key) != section.entries:
                 unsorted_sections.append(section.codeowner_section)
         return unsorted_sections
+
+    def get_sections_with_duplicate_paths(self):
+        sections_with_duplicate_paths = []
+        for section in self.codeowners_data:
+            if len(set(section.get_paths())) != len(section.get_paths()):
+                sections_with_duplicate_paths.append(section.codeowner_section)
+        return sections_with_duplicate_paths
 
     def update_codeowners_file(self):
         with open(self.file_path, 'w') as f:

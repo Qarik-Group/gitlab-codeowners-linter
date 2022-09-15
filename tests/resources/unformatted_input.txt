@@ -24,11 +24,13 @@ WORKSPACE test@email.com test1@email.com test2@email.com test3@email.com
 /go/src/github.com/test/path4/ test@email.com
 /ui/lighting/client test@email.com
 /ui/lighting test@email.com
+/ui/components/ test@email.com
 /www/ test@email.com
 /www/gitlab/test/path test@email.com
-/ui/components/ test@email.com
+/ui/components/ test1@email.com
 .gitlab test@email.com
 /ui test@email.com test1@email.com test2@email.com test3@email.com
+/ui/components/ test2@email.com
 
 # Build Group
 [BUILD] #this is a comment
