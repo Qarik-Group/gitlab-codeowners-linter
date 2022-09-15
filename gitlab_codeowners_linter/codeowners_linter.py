@@ -134,7 +134,10 @@ class OwnersList:
                         if entry.path == updated_entries[-1].path:
                             # we have a duplicate
                             updated_entries[-1].comments.extend(entry.comments)
-                            updated_entries[-1].owners.extend(entry.owners)
+                            new_owners = updated_entries[-1].owners + \
+                                entry.owners
+                            updated_entries[-1].owners = sorted(
+                                list(set(new_owners)))
                             continue
                         updated_entries.append(entry)
                         codeowners_updated[-1].entries = updated_entries
