@@ -36,4 +36,3 @@ repos:
 
 ## What's down the pipeline
 * Check that all paths under a section are unique
-* Check that paths exist
