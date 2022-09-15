@@ -4,7 +4,7 @@
 #   - every section must be sorted alphabetically
 #   - within a section, paths must be ordered alphabetically
 #   - there must be no empty lines between paths
-#   TODO: check that all paths under a section are unique, if not keep the path and merge the owners
+#   - paths in a section must be unique
 #   TODO: check that paths exists, if not delete them
 #   Note: there's the assumption that on the top of the file there are paths that
 #       are not under any section. This may not be always true, like in a CODEOWNERS
