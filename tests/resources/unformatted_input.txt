@@ -21,7 +21,6 @@ WORKSPACE test@email.com test1@email.com test2@email.com test3@email.com
 /go/src/github.com/test/path1/ test@email.com
 /go/src/github.com/test/path2/ test@email.com
 /go/src/github.com/test/path3/ test@email.com
-# This is a comment for a non existing line
 /go/src/github.com/test/path4/ test@email.com
 /ui/lighting/client test@email.com
 /ui/lighting test@email.com
