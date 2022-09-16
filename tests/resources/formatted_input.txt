@@ -1,4 +1,4 @@
-### GRAIL CODEOWNERS ###
+### CODEOWNERS ###
 #
 # This is a test case with no issues
 #
