@@ -20,7 +20,7 @@ pip install .
 ```
 
 You need to pass the `--codeowners_file`  argument to the linter with the path to the CODEOWNERS file.
-The linter by default will run in autofix mode. If you just want to check your file without modifying it use `--enable_autofix false`.
+The linter by default will run in autofix mode. If you just want to check your file without modifying it use `--no_autofix`.
 
 ### Usage with pre-commit
 

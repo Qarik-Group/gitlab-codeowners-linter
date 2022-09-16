@@ -4,5 +4,4 @@
   description: check that the Gitlab's CODEOWNERS file is well formatted
   entry: gitlab-codeowners-linter
   language: python
-  files: ^(CODEOWNERS|.gitlab/CODEOWNERS|docs/CODEOWNERS) # the only allowed locations for Gitlab's CODEOWNERS
-  pass_filenames: false
+  files: ^(CODEOWNERS|.gitlab/CODEOWNERS|docs/CODEOWNERS)$ # the only allowed locations for Gitlab's CODEOWNERS

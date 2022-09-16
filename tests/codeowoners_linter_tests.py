@@ -189,8 +189,12 @@ class Test(unittest.TestCase):
                 'formatted_autofix_input.txt',
             )
             shutil.copyfile(case.input, actual)
-            violations = lint_codeowners_file(actual, True)
-            self.assertEqual(violations, case.expected_check)
+            violations = lint_codeowners_file(actual, False)
+            self.assertEqual(violations, case.expected_check, 'failed autofix feature for test {} expected {}, actual {}'.format(
+                case.name,
+                case.expected_fix,
+                actual,
+            ),)
             with open(actual) as input, open(case.expected_fix) as expected_output:
                 self.assertListEqual(
                     list(input),

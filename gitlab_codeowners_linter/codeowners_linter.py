@@ -47,13 +47,13 @@ class CodeownerEntry:
 
 
 class OwnersList:
-    def __init__(self, file_path, enable_autofix):
+    def __init__(self, file_path, no_autofix):
         """
         file_path: path of the CODEOWNERS file
         """
         self.file_path = file_path
         self.codeowners_data = self.parse_codeowners()
-        self.autofix = enable_autofix
+        self.autofix = not no_autofix
 
     def check(self):
         violations = []
@@ -321,8 +321,8 @@ def sort_paths(entry1, entry2):
     return -1 if (line1 < line2) else 1
 
 
-def lint_codeowners_file(codeowners_file, enable_autofix):
-    codeowners = OwnersList(codeowners_file, enable_autofix)
+def lint_codeowners_file(codeowners_file, no_autofix):
+    codeowners = OwnersList(codeowners_file, no_autofix)
     return codeowners.check()
 
 
@@ -331,18 +331,18 @@ def parse_arguments():
     parser.add_argument('--codeowners_file', type=Path,
                         help='path to the codeowners file')
     parser.add_argument(
-        '--enable_autofix',
-        default=True,
+        '--no_autofix',
+        default=False,
         required=False,
-        help='Set to True to enable the autofix',
+        help='Set to disable autofix',
     )
-    return parser.parse_args()
+    return parser.parse_known_args()
 
 
 def main():
-    args = parse_arguments()
+    args, _ = parse_arguments()
     violations = lint_codeowners_file(
-        args.codeowners_file, args.enable_autofix)
+        args.codeowners_file, args.no_autofix)
     if violations:
         logging.error(
             'There are the following linting violations: %s', violations)
