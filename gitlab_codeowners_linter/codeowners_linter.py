@@ -5,7 +5,7 @@
 #   - within a section, paths must be ordered alphabetically
 #   - there must be no empty lines between paths
 #   - paths in a section must be unique
-#   TODO: check that paths exists, if not delete them
+#   - paths must exist
 #   Note: there's the assumption that on the top of the file there are paths that
 #       are not under any section. This may not be always true, like in a CODEOWNERS
 #       file that only uses sections TODO: manage this corner case
@@ -15,6 +15,7 @@ from __future__ import annotations
 import argparse
 import logging
 import operator
+import os
 import re
 import sys
 from functools import cmp_to_key
@@ -143,6 +144,24 @@ class OwnersList:
                         codeowners_updated[-1].entries = updated_entries
                 self.codeowners_data = codeowners_updated
 
+        # Do paths exist?
+        sections_with_non_existing_paths = self.get_sections_with_non_existing_paths()
+        if sections_with_non_existing_paths != []:
+            violations.append(
+                f"The sections {', '.join(map(str, sections_with_non_existing_paths))} have non-existing paths",
+            )
+            if self.autofix:
+                codeowners_updated = []
+                for section in self.codeowners_data:
+                    codeowners_updated.append(section)
+                    entries_updated = []
+                    for entry in section.entries:
+                        if not os.path.exists(entry.path):
+                            continue
+                        entries_updated.append(entry)
+                    codeowners_updated[-1].entries = entries_updated
+                self.codeowners_data = codeowners_updated
+
         if self.autofix:
             self.update_codeowners_file()
         return violations
@@ -175,6 +194,16 @@ class OwnersList:
             if len(set(section.get_paths())) != len(section.get_paths()):
                 sections_with_duplicate_paths.append(section.codeowner_section)
         return sections_with_duplicate_paths
+
+    def get_sections_with_non_existing_paths(self):
+        sections_with_non_existing_paths = []
+        for section in self.codeowners_data:
+            for path in section.get_paths():
+                if not os.path.exists(path):
+                    sections_with_non_existing_paths.append(
+                        section.codeowner_section)
+                    break
+        return sections_with_non_existing_paths
 
     def update_codeowners_file(self):
         with open(self.file_path, 'w') as f:

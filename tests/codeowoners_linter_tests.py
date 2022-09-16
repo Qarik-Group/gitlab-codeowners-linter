@@ -7,12 +7,18 @@ import unittest
 from dataclasses import dataclass
 from functools import cmp_to_key
 from pathlib import Path
-from typing import List
+from unittest.mock import patch
 
 from gitlab_codeowners_linter.codeowners_linter import CodeownerEntry
 from gitlab_codeowners_linter.codeowners_linter import CodeownerSection
 from gitlab_codeowners_linter.codeowners_linter import lint_codeowners_file
 from gitlab_codeowners_linter.codeowners_linter import sort_paths
+
+
+def non_existing_path_mock_side_effect(arg):
+    if arg == '/go/src/github.com/test/path4/':
+        return False
+    return True
 
 
 class Test(unittest.TestCase):
@@ -122,6 +128,10 @@ class Test(unittest.TestCase):
             )
 
     def test_autofix_feature(self):
+        patcher = patch('os.path.exists')
+        mock_thing = patcher.start()
+        mock_thing.side_effect = non_existing_path_mock_side_effect
+
         @dataclass
         class TestCase:
             name: str
@@ -153,6 +163,7 @@ class Test(unittest.TestCase):
                     'There are blank lines in the sections __default_codeowner_section__, BUILD, SECURITY',
                     'The paths in sections __default_codeowner_section__, BUILD, SYSTEM, TEST_SECTION are not sorted',
                     'The sections __default_codeowner_section__ have duplicate paths',
+                    'The sections __default_codeowner_section__ have non-existing paths',
                 ],
                 expected_fix=os.path.join(
                     os.path.dirname(os.path.abspath(__file__)),
