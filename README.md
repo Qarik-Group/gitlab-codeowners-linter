@@ -7,7 +7,6 @@ gitlab-codeowners-linter makes sure that the CODEOWNERS file is formatted respec
   - within a section, paths must be ordered alphabetically
   - paths in a section must be unique
   - there must be no empty lines between paths
-  - paths must exist
 
 The linter can run in check or autofix mode.
 
@@ -34,3 +33,6 @@ repos:
   - id:  gitlab-codeowners-linter
     args: ['--codeowners_file=path/to/your/CODEOWNERS/file']
 ```
+
+## What's down the pipeline
+* Check that paths exist

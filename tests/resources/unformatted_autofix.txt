@@ -20,6 +20,7 @@ WORKSPACE test@email.com test1@email.com test2@email.com test3@email.com
 /go/src/github.com/test/path1/ test@email.com
 /go/src/github.com/test/path2/ test@email.com
 /go/src/github.com/test/path3/ test@email.com
+/go/src/github.com/test/path4/ test@email.com
 /ui test@email.com test1@email.com test2@email.com test3@email.com
 /ui/components/ test_a@email.com test_b@email.com test_c@email.com
 /ui/lighting test@email.com
