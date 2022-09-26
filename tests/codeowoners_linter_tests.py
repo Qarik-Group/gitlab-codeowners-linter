@@ -12,6 +12,7 @@ from typing import List
 from gitlab_codeowners_linter.codeowners_linter import CodeownerEntry
 from gitlab_codeowners_linter.codeowners_linter import CodeownerSection
 from gitlab_codeowners_linter.codeowners_linter import lint_codeowners_file
+from gitlab_codeowners_linter.codeowners_linter import parse_arguments
 from gitlab_codeowners_linter.codeowners_linter import sort_paths
 
 
@@ -22,6 +23,40 @@ class Test(unittest.TestCase):
 
     def tearDown(self):
         shutil.rmtree(self.test_dir)
+
+    def test_parser(self):
+        @dataclass
+        class TestCase:
+            name: str
+            input: list[str]
+            expected_codeowners_file: str
+            expected_no_autofix: str
+
+        testcases = [
+            TestCase(
+                name='regular_input',
+                input=['--codeowners_file', 'path/to/CODEOWNERS'],
+                expected_codeowners_file='path/to/CODEOWNERS',
+                expected_no_autofix='False'),
+            TestCase(
+                name='trailing_paths_input',
+                input=['path/0', '--codeowners_file',
+                       'path/to/CODEOWNERS', 'path/1', 'path/2'],
+                expected_codeowners_file='path/to/CODEOWNERS',
+                expected_no_autofix='False'),
+            TestCase(
+                name='trailing_paths_input_and_no_fix',
+                input=['path/0', '--codeowners_file', 'path/to/CODEOWNERS',
+                       'path/1', 'path/2', '--no_autofix', 'path/3'],
+                expected_codeowners_file='path/to/CODEOWNERS',
+                expected_no_autofix='True')
+        ]
+
+        for case in testcases:
+            actual, _ = parse_arguments(case.input)
+            self.assertEqual(str(actual.codeowners_file),
+                             case.expected_codeowners_file)
+            self.assertEqual(str(actual.no_autofix), case.expected_no_autofix)
 
     def test_sort_function(self):
         @dataclass

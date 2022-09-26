@@ -297,7 +297,7 @@ def lint_codeowners_file(codeowners_file, no_autofix):
     return codeowners.check()
 
 
-def parse_arguments():
+def parse_arguments(args):
     parser = argparse.ArgumentParser(description='Check codeowners file')
     parser.add_argument('--codeowners_file', type=Path,
                         help='path to the codeowners file')
@@ -305,13 +305,14 @@ def parse_arguments():
         '--no_autofix',
         default=False,
         required=False,
+        action='store_true',
         help='Set to disable autofix',
     )
-    return parser.parse_known_args()
+    return parser.parse_known_args(args)
 
 
 def main():
-    args, _ = parse_arguments()
+    args, _ = parse_arguments(sys.argv[1:])
     violations = lint_codeowners_file(
         args.codeowners_file, args.no_autofix)
     if violations:
