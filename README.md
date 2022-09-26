@@ -29,7 +29,7 @@ You can use this linter with `pre-commit` by adding the following hook in your `
 ```yaml
 repos:
 - repo:  https://github.com/Qarik-Group/gitlab-codeowners-linter
-  rev: v0.0.3
+  rev: v0.0.4
   hooks:
   - id:  gitlab-codeowners-linter
     args: ['--codeowners_file=path/to/your/CODEOWNERS/file']
