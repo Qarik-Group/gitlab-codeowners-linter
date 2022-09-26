@@ -5,7 +5,7 @@
 #   - within a section, paths must be ordered alphabetically
 #   - there must be no empty lines between paths
 #   - paths in a section must be unique
-#   TODO: check that paths exists, if not delete them
+#   - paths must exist
 #   Note: there's the assumption that on the top of the file there are paths that
 #       are not under any section. This may not be always true, like in a CODEOWNERS
 #       file that only uses sections TODO: manage this corner case
@@ -15,11 +15,13 @@ from __future__ import annotations
 import argparse
 import logging
 import operator
+import os
 import re
 import sys
 from functools import cmp_to_key
 from pathlib import Path
 
+from pathspec import PathSpec
 
 DEFAULT_SECTION = '__default_codeowner_section__'
 
@@ -143,6 +145,24 @@ class OwnersList:
                         codeowners_updated[-1].entries = updated_entries
                 self.codeowners_data = codeowners_updated
 
+        # Do paths exist?
+        sections_with_non_existing_paths, non_existing_paths = self.get_non_existing_paths()
+        if sections_with_non_existing_paths != []:
+            violations.append(
+                f"The sections {', '.join(map(str, sections_with_non_existing_paths))} have non-existing paths",
+            )
+            if self.autofix:
+                codeowners_updated = []
+                for i in range(0, len(self.codeowners_data)):
+                    codeowners_updated.append(self.codeowners_data[i])
+                    entries_updated = []
+                    for entry in self.codeowners_data[i].entries:
+                        if entry.path in non_existing_paths[i]:
+                            continue
+                        entries_updated.append(entry)
+                    codeowners_updated[-1].entries = entries_updated
+                self.codeowners_data = codeowners_updated
+
         if self.autofix:
             self.update_codeowners_file()
         return violations
@@ -175,6 +195,43 @@ class OwnersList:
             if len(set(section.get_paths())) != len(section.get_paths()):
                 sections_with_duplicate_paths.append(section.codeowner_section)
         return sections_with_duplicate_paths
+
+    def get_all_filepaths(self):
+        """
+        This function will generate the file names in a directory
+        tree by walking the tree
+        """
+        file_paths = []  # List which will store all of the full filepaths.
+
+        # TODO: here we need root folder of the repo
+        for root, _, files in os.walk('.'):
+            for filename in files:
+                # Join the two strings in order to form the full filepath.
+                filepath = os.path.join(root, filename)
+                # we ignore the ./ at the beginning of the path
+                file_paths.append(filepath[2:])
+
+        return file_paths  # Self-explanatory.
+
+    def get_non_existing_paths(self):
+        sections_with_non_existing_paths = []
+        non_existing_paths = []
+        files = self.get_all_filepaths()
+        for section in self.codeowners_data:
+            spec = PathSpec.from_lines(
+                'gitwildmatch', list(section.get_paths()))
+            data = list(zip(section.get_paths(), spec.patterns))
+            non_existing_paths_in_section = []
+            for path, pattern in data:
+                match = list(filter(pattern.regex.match, files))
+                if not match:
+                    non_existing_paths_in_section.append(path)
+            if non_existing_paths_in_section:
+                sections_with_non_existing_paths.append(
+                    section.codeowner_section)
+            non_existing_paths.append(non_existing_paths_in_section)
+
+        return sections_with_non_existing_paths, non_existing_paths
 
     def update_codeowners_file(self):
         with open(self.file_path, 'w') as f:
