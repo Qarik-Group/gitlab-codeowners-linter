@@ -1,38 +1,30 @@
-### GRAIL CODEOWNERS ###
+### CODEOWNERS ###
 #
-# This is a test case with no issues
+# This is a test case for existing paths
 #
 
-# this is a comment for * test@email.com test1@email.com test2@email.com
+.pre-commit-config.yaml test1@email.com
 * test@email.com test1@email.com test2@email.com
-*.md test@email.com
-.gitlab test@email.com test1@email.com test2@email.com
-\#file_with_pound.rb test@email.com test1@email.com test2@email.com
-WORKSPACE test@email.com test1@email.com test2@email.com test3@email.com
-/.pylintrc test@email.com
-# this is a comment for /ui test@email.com
-/ui test@email.com
+* test@rmail.com
+*.txt test@email.com
+/tests/resources/empty_input.txt test1@email.com test2@email.com
+tests/resources/empty_input.txt test@email.com test3@email.com
+/tests/codeowners_linter_tests.py test1@email.com
 /ui/components/ test@email.com test1@email.com test2@email.com test3@email.com
 /ui/lighting test@email.com test1@email.com test2@email.com test3@email.com
 /ui/lighting/client test@email.com
-/www/ test@email.com
-/www/gitlab/test/pa test@email.com #this is a comment
-
-# Gitlab Groups
-[BUILD]
-.gitlab/.gitlab-ci.yml test@email.com
-.gitlab/ci/ test@email.com test1@email.com test2@email.com test3@email.com
-CODEOWNERS test@email.com test1@email.com test2@email.com test3@email.com
-/ops/gitlab/ test@email.com
+tests/resources/existing_paths_input.txt test1@email.com test2@email.com
 
 [SECURITY]
 /ops/terraform/path1 @test/teams/admin @test/teams/security/admin
 /ops/terraform/path2/ @test/teams/security/admin
+tests/resources/existing_paths_input.txt test1@email.com test2@email.com
 
 # This is a comment for [SYSTEM]
 [SYSTEM]
 /docker/pipeline/ test@email.com test1@email.com test2@email.com test3@email.com
 /go/src/repo/pipeline/ test@email.com test1@email.com test2@email.com test3@email.com
 /ops/terraform/pipeline/ test@email.com
+*.py test@email.com
 /pipeline/ test@email.com test1@email.com test2@email.com test3@email.com
 /release/release_script.sh test@email.com

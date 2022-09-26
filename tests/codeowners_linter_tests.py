@@ -9,6 +9,7 @@ from functools import cmp_to_key
 from pathlib import Path
 from unittest.mock import patch
 
+import gitlab_codeowners_linter  # we need the full import for the mock
 from gitlab_codeowners_linter.codeowners_linter import CodeownerEntry
 from gitlab_codeowners_linter.codeowners_linter import CodeownerSection
 from gitlab_codeowners_linter.codeowners_linter import lint_codeowners_file
@@ -16,18 +17,14 @@ from gitlab_codeowners_linter.codeowners_linter import parse_arguments
 from gitlab_codeowners_linter.codeowners_linter import sort_paths
 
 
-def non_existing_path_mock_side_effect(arg):
-    if arg == '/go/src/github.com/test/path4/':
-        return False
-    return True
-
-
-class Test(unittest.TestCase):
+class Test_Functions(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.test_dir = tempfile.mkdtemp()
+        self.get_non_existing_paths = gitlab_codeowners_linter.codeowners_linter.OwnersList.get_non_existing_paths
 
     def tearDown(self):
+        gitlab_codeowners_linter.codeowners_linter.OwnersList.get_non_existing_paths = self.get_non_existing_paths
         shutil.rmtree(self.test_dir)
 
     def test_parser(self):
@@ -162,10 +159,72 @@ class Test(unittest.TestCase):
                 ),
             )
 
+    def test_non_existing_path_autofix(self):
+
+        @dataclass
+        class TestCase:
+            name: str
+            input: Path
+            expected_check: list[str]
+            expected_fix: Path
+
+        testcases = [
+            TestCase(
+                name='already_formatted',
+                input=os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)),
+                    'resources/existing_paths_input.txt',
+                ),
+                expected_check=[
+                    'The paths in sections __default_codeowner_section__, SECURITY, SYSTEM are not sorted',
+                    'The sections __default_codeowner_section__ have duplicate paths',
+                    'The sections __default_codeowner_section__, SECURITY, SYSTEM have non-existing paths'],
+                expected_fix=os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)),
+                    'resources/existing_paths_autofix.txt',
+                ),
+            ),
+        ]
+        for case in testcases:
+            actual = os.path.join(
+                self.test_dir,
+                'actual_input.txt',
+            )
+            shutil.copyfile(case.input, actual)
+            violations = lint_codeowners_file(actual, False)
+            self.assertEqual(violations, case.expected_check, 'failed autofix feature for test {} expected {}, actual {}'.format(
+                case.name,
+                case.expected_fix,
+                actual,
+            ))
+            with open(actual) as input, open(case.expected_fix) as expected_output:
+                self.assertListEqual(
+                    list(input),
+                    list(expected_output),
+                    'failed autofix feature for test {} expected {}, actual {}'.format(
+                        case.name,
+                        case.expected_fix,
+                        actual,
+                    ),
+                )
+
+
+class Test_Autofix(unittest.TestCase):
+
+    def setUp(self):
+        self.maxDiff = None
+        self.test_dir = tempfile.mkdtemp()
+        self.get_non_existing_paths = gitlab_codeowners_linter.codeowners_linter.OwnersList.get_non_existing_paths
+
+    def tearDown(self):
+        gitlab_codeowners_linter.codeowners_linter.OwnersList.get_non_existing_paths = self.get_non_existing_paths
+        shutil.rmtree(self.test_dir)
+
     def test_autofix_feature(self):
-        patcher = patch('os.path.exists')
+        patcher = patch(
+            'gitlab_codeowners_linter.codeowners_linter.OwnersList.get_non_existing_paths')
         mock_thing = patcher.start()
-        mock_thing.side_effect = non_existing_path_mock_side_effect
+        mock_thing.return_value = [], []
 
         @dataclass
         class TestCase:
@@ -198,7 +257,6 @@ class Test(unittest.TestCase):
                     'There are blank lines in the sections __default_codeowner_section__, BUILD, SECURITY',
                     'The paths in sections __default_codeowner_section__, BUILD, SYSTEM, TEST_SECTION are not sorted',
                     'The sections __default_codeowner_section__ have duplicate paths',
-                    'The sections __default_codeowner_section__ have non-existing paths',
                 ],
                 expected_fix=os.path.join(
                     os.path.dirname(os.path.abspath(__file__)),
@@ -221,7 +279,7 @@ class Test(unittest.TestCase):
         for case in testcases:
             actual = os.path.join(
                 self.test_dir,
-                'formatted_autofix_input.txt',
+                'actual_input.txt',
             )
             shutil.copyfile(case.input, actual)
             violations = lint_codeowners_file(actual, False)
