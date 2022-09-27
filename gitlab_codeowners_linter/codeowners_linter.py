@@ -17,15 +17,44 @@ import logging
 import sys
 from pathlib import Path
 
-from gitlab_codeowners_linter.check_and_fix import OwnersList
+from gitlab_codeowners_linter.autofix import fix
+from gitlab_codeowners_linter.checks import check
+from gitlab_codeowners_linter.parser import parse_codeowners
 
 # TODO: manage logging level via args
 logging.basicConfig(level=logging.DEBUG)
 
 
+class CodeownersViolations:
+    def __init__(self):
+        self.violation_error_messages = []
+        self.section_names_sorted = False
+        self.sections_with_blank_lines = []
+        self.unsorted_paths_in_sections = []
+        self.sections_with_duplicate_paths = []
+        self.sections_with_non_existing_paths = []
+        self.non_existing_paths = []
+
+
+class OwnersList:
+    def __init__(self, file_path, no_autofix):
+        """
+        file_path: path of the CODEOWNERS file
+        """
+        self.file_path = file_path
+        self.codeowners_data = parse_codeowners(self.file_path)
+        self.autofix = not no_autofix
+
+    def lint(self):
+        violations = check(self.codeowners_data)
+        if self.autofix:
+            fix(self.codeowners_data, violations, self.file_path)
+        return violations
+
+
 def lint_codeowners_file(codeowners_file, no_autofix):
     codeowners = OwnersList(codeowners_file, no_autofix)
-    return codeowners.check()
+    return codeowners.lint()
 
 
 def parse_arguments(args):
@@ -46,9 +75,9 @@ def main():
     args, _ = parse_arguments(sys.argv[1:])
     violations = lint_codeowners_file(
         args.codeowners_file, args.no_autofix)
-    if violations:
+    if violations.violation_error_messages:
         logging.error(
-            'There are the following linting violations: %s', violations)
+            'There are the following linting violations: %s', violations.violation_error_messages)
         sys.exit(1)
 
 
