@@ -10,21 +10,21 @@ from pathlib import Path
 from unittest.mock import patch
 
 import gitlab_codeowners_linter  # we need the full import for the mock
-from gitlab_codeowners_linter.codeowners_linter import CodeownerEntry
-from gitlab_codeowners_linter.codeowners_linter import CodeownerSection
 from gitlab_codeowners_linter.codeowners_linter import lint_codeowners_file
 from gitlab_codeowners_linter.codeowners_linter import parse_arguments
-from gitlab_codeowners_linter.codeowners_linter import sort_paths
+from gitlab_codeowners_linter.parser import CodeownerEntry
+from gitlab_codeowners_linter.parser import CodeownerSection
+from gitlab_codeowners_linter.sorting import sort_paths
 
 
 class Test_Functions(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.test_dir = tempfile.mkdtemp()
-        self.get_non_existing_paths = gitlab_codeowners_linter.codeowners_linter.OwnersList.get_non_existing_paths
+        self._get_non_existing_paths = gitlab_codeowners_linter.check_and_fix.OwnersList._get_non_existing_paths
 
     def tearDown(self):
-        gitlab_codeowners_linter.codeowners_linter.OwnersList.get_non_existing_paths = self.get_non_existing_paths
+        gitlab_codeowners_linter.check_and_fix.OwnersList._get_non_existing_paths = self._get_non_existing_paths
         shutil.rmtree(self.test_dir)
 
     def test_parser(self):
@@ -214,15 +214,15 @@ class Test_Autofix(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.test_dir = tempfile.mkdtemp()
-        self.get_non_existing_paths = gitlab_codeowners_linter.codeowners_linter.OwnersList.get_non_existing_paths
+        self._get_non_existing_paths = gitlab_codeowners_linter.check_and_fix.OwnersList._get_non_existing_paths
 
     def tearDown(self):
-        gitlab_codeowners_linter.codeowners_linter.OwnersList.get_non_existing_paths = self.get_non_existing_paths
+        gitlab_codeowners_linter.check_and_fix.OwnersList._get_non_existing_paths = self._get_non_existing_paths
         shutil.rmtree(self.test_dir)
 
     def test_autofix_feature(self):
         patcher = patch(
-            'gitlab_codeowners_linter.codeowners_linter.OwnersList.get_non_existing_paths')
+            'gitlab_codeowners_linter.check_and_fix.OwnersList._get_non_existing_paths')
         mock_thing = patcher.start()
         mock_thing.return_value = [], []
 
