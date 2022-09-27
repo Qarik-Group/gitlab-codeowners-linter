@@ -203,7 +203,6 @@ class OwnersList:
         """
         file_paths = []  # List which will store all of the full filepaths.
 
-        # TODO: here we need root folder of the repo
         for root, _, files in os.walk('.'):
             for filename in files:
                 # Join the two strings in order to form the full filepath.
