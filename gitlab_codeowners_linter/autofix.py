@@ -31,23 +31,27 @@ def fix(codeowners_data, violations, file_path):
         if violations.sections_with_blank_lines != []:
             if not section.codeowner_section in violations.sections_with_blank_lines:
                 pass
-            codeowners_data_updated[-1] = _fix_blank_lines(
-                codeowners_data_updated[-1])
+            else:
+                codeowners_data_updated[-1] = _fix_blank_lines(
+                    codeowners_data_updated[-1])
         if violations.unsorted_paths_in_sections != []:
             if not section.codeowner_section in violations.unsorted_paths_in_sections:
                 pass
-            codeowners_data_updated[-1] = _fix_unsorted_paths(
-                codeowners_data_updated[-1])
+            else:
+                codeowners_data_updated[-1] = _fix_unsorted_paths(
+                    codeowners_data_updated[-1])
         if violations.sections_with_duplicate_paths != []:
             if not section.codeowner_section in violations.sections_with_duplicate_paths:
                 pass
-            codeowners_data_updated[-1] = _fix_duplicated_paths(
-                codeowners_data_updated[-1])
+            else:
+                codeowners_data_updated[-1] = _fix_duplicated_paths(
+                    codeowners_data_updated[-1])
         if violations.sections_with_non_existing_paths != []:
             if not section.codeowner_section in violations.sections_with_non_existing_paths:
                 pass
-            codeowners_data_updated[-1] = _fix_nonexisting_paths(
-                codeowners_data_updated[-1], violations.non_existing_paths[violations.sections_with_non_existing_paths.index(section.codeowner_section)])
+            else:
+                codeowners_data_updated[-1] = _fix_nonexisting_paths(
+                    codeowners_data_updated[-1], violations.non_existing_paths[violations.sections_with_non_existing_paths.index(section.codeowner_section)])
     codeowners_data = codeowners_data_updated
 
     _update_codeowners_file(codeowners_data, file_path)
