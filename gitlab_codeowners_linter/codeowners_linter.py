@@ -25,17 +25,6 @@ from gitlab_codeowners_linter.parser import parse_codeowners
 logging.basicConfig(level=logging.DEBUG)
 
 
-class CodeownersViolations:
-    def __init__(self):
-        self.violation_error_messages = []
-        self.section_names_sorted = False
-        self.sections_with_blank_lines = []
-        self.unsorted_paths_in_sections = []
-        self.sections_with_duplicate_paths = []
-        self.sections_with_non_existing_paths = []
-        self.non_existing_paths = []
-
-
 class OwnersList:
     def __init__(self, file_path, no_autofix):
         """
