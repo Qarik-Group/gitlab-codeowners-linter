@@ -5,12 +5,22 @@ from functools import cmp_to_key
 
 from pathspec import PathSpec
 
-import gitlab_codeowners_linter.codeowners_linter as data
 from gitlab_codeowners_linter.sorting import sort_paths
 
 
+class CodeownersViolations:
+    def __init__(self):
+        self.violation_error_messages = []
+        self.section_names_sorted = False
+        self.sections_with_blank_lines = []
+        self.unsorted_paths_in_sections = []
+        self.sections_with_duplicate_paths = []
+        self.sections_with_non_existing_paths = []
+        self.non_existing_paths = []
+
+
 def check(codeowners_data):
-    violations = data.CodeownersViolations()
+    violations = CodeownersViolations()
 
     if _is_codeowners_empty(codeowners_data):
         return violations
