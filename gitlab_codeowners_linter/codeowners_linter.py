@@ -12,13 +12,12 @@
 #
 from __future__ import annotations
 
-import argparse
 import logging
 import sys
-from pathlib import Path
 
 from gitlab_codeowners_linter.autofix import fix
 from gitlab_codeowners_linter.checks import check
+from gitlab_codeowners_linter.input import get_arguments
 from gitlab_codeowners_linter.parser import parse_codeowners
 
 # TODO: manage logging level via args
@@ -46,24 +45,14 @@ def lint_codeowners_file(codeowners_file, no_autofix):
     return codeowners.lint()
 
 
-def parse_arguments(args):
-    parser = argparse.ArgumentParser(description='Check codeowners file')
-    parser.add_argument('--codeowners_file', type=Path,
-                        help='path to the codeowners file')
-    parser.add_argument(
-        '--no_autofix',
-        default=False,
-        required=False,
-        action='store_true',
-        help='Set to disable autofix',
-    )
-    return parser.parse_known_args(args)
-
-
 def main():
-    args, _ = parse_arguments(sys.argv[1:])
+    codeowners_file, no_autofix = get_arguments(sys.argv[1:])
+    if codeowners_file == None:
+        logging.error(
+            'You did not provide a valid CODEOWNERS path, you can use a positional argument or the flag --codeowners_file. Please refer to the README for more info')
+        sys.exit(1)
     violations = lint_codeowners_file(
-        args.codeowners_file, args.no_autofix)
+        codeowners_file, no_autofix)
     if violations.violation_error_messages:
         logging.error(
             'There are the following linting violations: %s', violations.violation_error_messages)
