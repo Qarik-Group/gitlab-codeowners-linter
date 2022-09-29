@@ -8,3 +8,5 @@ dist
 .mypy_cache
 .vscode
 build
+.coverage
+htmlcov/

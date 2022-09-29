@@ -35,5 +35,5 @@ def get_arguments(args):
     elif not args.codeowners_file:
         codeowners_file = _get_codeowners_path(positional_args)
     else:
-        print("You didn't provide a valid path for the CODEOWNERS file")
+        pass
     return codeowners_file, args.no_autofix
