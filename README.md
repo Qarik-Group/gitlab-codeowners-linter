@@ -19,7 +19,7 @@ cd gitlab-codeowners-linter
 pip install .
 ```
 
-You need to pass the path to the CODEOWNERS file to linter. It can be done via positional argument or with the `--codeowners_file` with the path to the CODEOWNERS file.
+You need to pass the path to the CODEOWNERS file to the linter. It can be done via positional argument or with the `--codeowners_file` with the path to the CODEOWNERS file.
 The linter by default will run in autofix mode. If you just want to check your file without modifying it use `--no_autofix`.
 
 ### Usage with pre-commit
@@ -29,7 +29,7 @@ You can use this linter with `pre-commit` by adding the following hook in your `
 ```yaml
 repos:
 - repo:  https://github.com/Qarik-Group/gitlab-codeowners-linter
-  rev: v0.0.5
+  rev: v1.0.0
   hooks:
   - id:  gitlab-codeowners-linter
     args: ['--codeowners_file=path/to/your/CODEOWNERS/file']
