@@ -11,7 +11,7 @@ from unittest.mock import patch
 
 import gitlab_codeowners_linter  # we need the full import for the mock
 from gitlab_codeowners_linter.codeowners_linter import lint_codeowners_file
-from gitlab_codeowners_linter.codeowners_linter import parse_arguments
+from gitlab_codeowners_linter.input import get_arguments
 from gitlab_codeowners_linter.parser import CodeownerEntry
 from gitlab_codeowners_linter.parser import CodeownerSection
 from gitlab_codeowners_linter.sorting import sort_paths
@@ -38,28 +38,40 @@ class Test_Functions(unittest.TestCase):
         testcases = [
             TestCase(
                 name='regular_input',
-                input=['--codeowners_file', 'path/to/CODEOWNERS'],
-                expected_codeowners_file='path/to/CODEOWNERS',
+                input=['--codeowners_file', 'CODEOWNERS'],
+                expected_codeowners_file='CODEOWNERS',
                 expected_no_autofix='False'),
             TestCase(
-                name='trailing_paths_input',
-                input=['path/0', '--codeowners_file',
-                       'path/to/CODEOWNERS', 'path/1', 'path/2'],
-                expected_codeowners_file='path/to/CODEOWNERS',
+                name='trailing_paths_input_ignored',
+                input=['.gitlab/CODEOWNERS', '--codeowners_file',
+                       'CODEOWNERS', 'path/1', 'path/2'],
+                expected_codeowners_file='CODEOWNERS',
                 expected_no_autofix='False'),
             TestCase(
                 name='trailing_paths_input_and_no_fix',
-                input=['path/0', '--codeowners_file', 'path/to/CODEOWNERS',
+                input=['.gitlab/CODEOWNERS', 'path/to/CODEOWNERS',
                        'path/1', 'path/2', '--no_autofix', 'path/3'],
-                expected_codeowners_file='path/to/CODEOWNERS',
+                expected_codeowners_file='.gitlab/CODEOWNERS',
+                expected_no_autofix='True'),
+            TestCase(
+                name='positional_paths_wrong_input_and_no_fix',
+                input=['.gitlab/wrong/CODEOWNERS', 'path/to/CODEOWNERS',
+                       'path/1', 'path/2', '--no_autofix', 'path/3'],
+                expected_codeowners_file='None',
                 expected_no_autofix='True')
         ]
 
         for case in testcases:
-            actual, _ = parse_arguments(case.input)
-            self.assertEqual(str(actual.codeowners_file),
-                             case.expected_codeowners_file)
-            self.assertEqual(str(actual.no_autofix), case.expected_no_autofix)
+            codeowners_file, no_autofix = get_arguments(case.input)
+            self.assertEqual(str(codeowners_file),
+                             case.expected_codeowners_file, 'failed test {} expected {}, actual {}'.format(
+                case.name,
+                case.expected_codeowners_file,
+                codeowners_file,))
+            self.assertEqual(str(no_autofix), case.expected_no_autofix, 'failed test {} expected {}, actual {}'.format(
+                case.name,
+                case.expected_no_autofix,
+                no_autofix,))
 
     def test_sort_function(self):
         @dataclass
