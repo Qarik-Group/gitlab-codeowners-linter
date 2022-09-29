@@ -50,7 +50,7 @@ def main():
     if codeowners_file == None:
         logging.error(
             'You did not provide a valid CODEOWNERS path, you can use a positional argument or the flag --codeowners_file. Please refer to the README for more info')
-        sys.exit(1)
+        sys.exit(0)
     violations = lint_codeowners_file(
         codeowners_file, no_autofix)
     if violations.violation_error_messages:
