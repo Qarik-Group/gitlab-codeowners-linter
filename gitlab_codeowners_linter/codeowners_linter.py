@@ -21,7 +21,7 @@ from gitlab_codeowners_linter.input import get_arguments
 from gitlab_codeowners_linter.parser import parse_codeowners
 
 # TODO: manage logging level via args
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.ERROR)
 
 
 class OwnersList:
@@ -48,7 +48,7 @@ def lint_codeowners_file(codeowners_file, no_autofix):
 def main():
     codeowners_file, no_autofix = get_arguments(sys.argv[1:])
     if codeowners_file == None:
-        logging.error(
+        logging.debug(
             'You did not provide a valid CODEOWNERS path, you can use a positional argument or the flag --codeowners_file. Please refer to the README for more info')
         sys.exit(0)
     violations = lint_codeowners_file(
