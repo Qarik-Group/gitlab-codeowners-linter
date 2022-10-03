@@ -115,7 +115,9 @@ def _update_codeowners_file(codeowners_data, file_path):
     with open(file_path, 'w') as f:
         for section in codeowners_data:
             # if the default section is empty let's skip it
-            if section.codeowner_section != DEFAULT_SECTION and section != codeowners_data[0]:
+            if section.codeowner_section == DEFAULT_SECTION and section.entries == []:
+                continue
+            if section.codeowner_section != DEFAULT_SECTION:
                 f.write('\n')
             if section.comments:
                 for comment_line in section.comments:
