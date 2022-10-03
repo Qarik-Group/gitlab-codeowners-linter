@@ -71,8 +71,9 @@ def check(codeowners_data):
 
 def _is_codeowners_empty(codeowners_data):
     empty = False
-    if all(not section.get_paths() for section in codeowners_data):
-        empty = True
+    for section in codeowners_data:
+        if not section.get_paths():
+            empty = True
     return empty
 
 

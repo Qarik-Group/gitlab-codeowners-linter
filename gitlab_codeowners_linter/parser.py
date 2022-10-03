@@ -56,6 +56,7 @@ def parse_codeowners(file_path):
             continue
         if _is_empty_line(line):
             if _is_top_of_section(codeowners_content):
+                # TODO: note that if we have a CODEOWNERS file with a black line on top, that line will be threated as a comment line for the first general section
                 codeowners_content[-1].comments.extend(comments_block)
                 comments_block = []
                 continue
@@ -100,13 +101,5 @@ def parse_codeowners(file_path):
         if section.entries:
             if _is_empty_line(section.entries[-1].path):
                 section.entries = section.entries[:-1]
-
-    # let's also check if the default section exists, if not let's remove it
-    if codeowners_content[0].entries == []:
-        if codeowners_content[0].comments:
-            for i in range(0, len(codeowners_content[0].comments)):
-                codeowners_content[1].comments.insert(
-                    i, codeowners_content[0].comments[i])
-        codeowners_content.pop(0)
 
     return codeowners_content
