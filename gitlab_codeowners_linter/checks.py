@@ -17,6 +17,7 @@ class CodeownersViolations:
         self.sections_with_duplicate_paths = []
         self.sections_with_non_existing_paths = []
         self.non_existing_paths = []
+        self.duplicated_sections = False
 
 
 def check(codeowners_data):
@@ -33,6 +34,14 @@ def check(codeowners_data):
     ):
         violations.violation_error_messages.append('Sections are not sorted')
         violations.section_names_sorted = True
+
+    # Are there duplicated sections?
+    all_sections_name = list(section.codeowner_section.lower()
+                             for section in codeowners_data)
+    if len(set(all_sections_name)) != len(all_sections_name):
+        violations.violation_error_messages.append(
+            'There are duplicated sections')
+        violations.duplicated_sections = True
 
     # Are there blank lines in sections?
     violations.sections_with_blank_lines = _get_sections_with_blank_lines(

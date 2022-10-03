@@ -283,9 +283,10 @@ class Test_Autofix(unittest.TestCase):
                 ),
                 expected_check=[
                     'Sections are not sorted',
+                    'There are duplicated sections',
                     'There are blank lines in the sections SECTION_NAME, BUILD, SECURITY',
-                    'The paths in sections SECTION_NAME, BUILD, SYSTEM, TEST_SECTION are not sorted',
-                    'The sections SECTION_NAME have duplicate paths',
+                    'The paths in sections SECTION_NAME, BUILD, SYSTEM, SECTION_NAME, TEST_SECTION are not sorted',
+                    'The sections SECTION_NAME, SECTION_NAME have duplicate paths',
                 ],
                 expected_fix=os.path.join(
                     os.path.dirname(os.path.abspath(__file__)),

@@ -22,6 +22,16 @@ def fix(codeowners_data, violations, file_path):
         codeowners_data_updated.extend(sorted_sections_names)
         codeowners_data = codeowners_data_updated
 
+    # Are there duplicated sections?
+    if violations.duplicated_sections:
+        for i in range(len(codeowners_data)-1):
+            if codeowners_data[i].codeowner_section.lower() == codeowners_data[i+1].codeowner_section.lower():
+                codeowners_data[i].comments = codeowners_data[i].comments + \
+                    codeowners_data[i+1].comments
+                codeowners_data[i].entries = codeowners_data[i].entries + \
+                    codeowners_data[i+1].entries
+                codeowners_data.pop(i+1)
+
     # Then fix section's content
 
     codeowners_data_updated = []
