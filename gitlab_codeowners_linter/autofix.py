@@ -115,17 +115,18 @@ def _update_codeowners_file(codeowners_data, file_path):
     with open(file_path, 'w') as f:
         for section in codeowners_data:
             # if the default section is empty let's skip it
-            if section.codeowner_section != DEFAULT_SECTION and section != codeowners_data[0]:
+            if section.codeowner_section != DEFAULT_SECTION:
                 f.write('\n')
             if section.comments:
                 for comment_line in section.comments:
                     f.write(f'{comment_line}\n')
             if section.codeowner_section != DEFAULT_SECTION:
                 f.write(f'[{section.codeowner_section}]')
-            f.write('\n')
-            for entry in section.entries:
-                if entry.comments:
-                    for comment_line in entry.comments:
-                        f.write(f'{comment_line}\n')
-                owners = ' '.join(str(x) for x in entry.owners)
-                f.write(f'{entry.path} {owners}\n')
+            if section.entries:
+                f.write('\n')
+                for entry in section.entries:
+                    if entry.comments:
+                        for comment_line in entry.comments:
+                            f.write(f'{comment_line}\n')
+                    owners = ' '.join(str(x) for x in entry.owners)
+                    f.write(f'{entry.path} {owners}\n')

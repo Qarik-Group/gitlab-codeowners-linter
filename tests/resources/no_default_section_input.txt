@@ -4,8 +4,10 @@
 #   - sections are not ordered alphabetically
 #   - paths within sections are not sorted alphabetically
 #   - paths within sections have blank lines
+#   - the default section is missing
 #
 
+# Comment for SECTION_NAME
 [SECTION_NAME]
 # this is a comment for *.md test@email.com
 *.md test@email.com
