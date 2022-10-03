@@ -276,6 +276,23 @@ class Test_Autofix(unittest.TestCase):
                 ),
             ),
             TestCase(
+                name='not_formatted_no_default_section',
+                input=os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)),
+                    'resources/no_default_section_input.txt',
+                ),
+                expected_check=[
+                    'Sections are not sorted',
+                    'There are blank lines in the sections SECTION_NAME, BUILD, SECURITY',
+                    'The paths in sections SECTION_NAME, BUILD, SYSTEM, TEST_SECTION are not sorted',
+                    'The sections SECTION_NAME have duplicate paths',
+                ],
+                expected_fix=os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)),
+                    'resources/no_default_section_autofix.txt',
+                ),
+            ),
+            TestCase(
                 name='empty_file',
                 input=os.path.join(
                     os.path.dirname(os.path.abspath(__file__)),

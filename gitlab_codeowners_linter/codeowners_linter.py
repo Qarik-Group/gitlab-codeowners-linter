@@ -6,9 +6,6 @@
 #   - there must be no empty lines between paths
 #   - paths in a section must be unique
 #   - paths must exist
-#   Note: there's the assumption that on the top of the file there are paths that
-#       are not under any section. This may not be always true, like in a CODEOWNERS
-#       file that only uses sections TODO: manage this corner case
 #
 from __future__ import annotations
 
