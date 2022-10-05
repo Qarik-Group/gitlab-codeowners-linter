@@ -188,9 +188,11 @@ class Test_Functions(unittest.TestCase):
                     'resources/existing_paths_input.txt',
                 ),
                 expected_check=[
-                    'The paths in sections __default_codeowner_section__, SECURITY, SYSTEM are not sorted',
+                    'Sections are not sorted',
+                    'The sections SECURITY, security are duplicates',
+                    'The paths in sections __default_codeowner_section__, Security, SYSTEM, SECURITY are not sorted',
                     'The sections __default_codeowner_section__ have duplicate paths',
-                    'The sections __default_codeowner_section__, SECURITY, SYSTEM have non-existing paths'],
+                    'The sections __default_codeowner_section__, Security, SYSTEM, SECURITY, security have non-existing paths'],
                 expected_fix=os.path.join(
                     os.path.dirname(os.path.abspath(__file__)),
                     'resources/existing_paths_autofix.txt',
@@ -283,9 +285,10 @@ class Test_Autofix(unittest.TestCase):
                 ),
                 expected_check=[
                     'Sections are not sorted',
-                    'There are blank lines in the sections SECTION_NAME, BUILD, SECURITY',
-                    'The paths in sections SECTION_NAME, BUILD, SYSTEM, TEST_SECTION are not sorted',
-                    'The sections SECTION_NAME have duplicate paths',
+                    'The sections SECTION_NAME, section_name, Section_Name are duplicates',
+                    'There are blank lines in the sections Section_name, BUILD, SECURITY',
+                    'The paths in sections Section_name, BUILD, SYSTEM, SECTION_NAME, TEST_SECTION are not sorted',
+                    'The sections Section_name, SECTION_NAME have duplicate paths',
                 ],
                 expected_fix=os.path.join(
                     os.path.dirname(os.path.abspath(__file__)),

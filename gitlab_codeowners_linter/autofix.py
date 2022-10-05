@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-import operator
 from functools import cmp_to_key
 
 from gitlab_codeowners_linter.constants import DEFAULT_SECTION
 from gitlab_codeowners_linter.sorting import sort_paths
+from gitlab_codeowners_linter.sorting import sort_section_names
 
 
 def fix(codeowners_data, violations, file_path):
@@ -13,14 +13,33 @@ def fix(codeowners_data, violations, file_path):
 
     # Are custom section names sorted?
     if violations.section_names_sorted:
+        sort_sections_names_key = cmp_to_key(sort_section_names)
         sorted_sections_names = sorted(
             codeowners_data[1:],
-            key=operator.attrgetter('codeowner_section'),
+            key=sort_sections_names_key,
         )
         codeowners_data_updated = []
         codeowners_data_updated.append(codeowners_data[0])
         codeowners_data_updated.extend(sorted_sections_names)
         codeowners_data = codeowners_data_updated
+
+    # Are there duplicated sections?
+
+    if violations.duplicated_sections != []:
+        # If multiple sections have the same name, they are combined.
+        # Also, section headings are not case-sensitive.
+        # For example the entries defined under the sections Documentation
+        # and DOCUMENTATION are combined, using the case of the first section
+        i = 0
+        while i < len(codeowners_data)-1:
+            if codeowners_data[i].codeowner_section.lower() == codeowners_data[i+1].codeowner_section.lower():
+                codeowners_data[i].comments = codeowners_data[i].comments + \
+                    codeowners_data[i+1].comments
+                codeowners_data[i].entries = codeowners_data[i].entries + \
+                    codeowners_data[i+1].entries
+                codeowners_data.pop(i+1)
+            else:
+                i += 1
 
     # Then fix section's content
 
@@ -34,14 +53,14 @@ def fix(codeowners_data, violations, file_path):
             else:
                 codeowners_data_updated[-1] = _fix_blank_lines(
                     codeowners_data_updated[-1])
-        if violations.unsorted_paths_in_sections != []:
-            if not section.codeowner_section in violations.unsorted_paths_in_sections:
+        if violations.unsorted_paths_in_sections != [] or violations.duplicated_sections != []:
+            if not section.codeowner_section in violations.unsorted_paths_in_sections and violations.duplicated_sections == []:
                 pass
             else:
                 codeowners_data_updated[-1] = _fix_unsorted_paths(
                     codeowners_data_updated[-1])
-        if violations.sections_with_duplicate_paths != []:
-            if not section.codeowner_section in violations.sections_with_duplicate_paths:
+        if violations.sections_with_duplicate_paths != [] or violations.duplicated_sections != []:
+            if not section.codeowner_section in violations.sections_with_duplicate_paths and violations.duplicated_sections == []:
                 pass
             else:
                 codeowners_data_updated[-1] = _fix_duplicated_paths(
@@ -51,7 +70,7 @@ def fix(codeowners_data, violations, file_path):
                 pass
             else:
                 codeowners_data_updated[-1] = _fix_nonexisting_paths(
-                    codeowners_data_updated[-1], violations.non_existing_paths[violations.sections_with_non_existing_paths.index(section.codeowner_section)])
+                    codeowners_data_updated[-1], violations.non_existing_paths[section.codeowner_section.lower()])
     codeowners_data = codeowners_data_updated
 
     _update_codeowners_file(codeowners_data, file_path)

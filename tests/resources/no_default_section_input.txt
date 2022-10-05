@@ -7,8 +7,8 @@
 #   - the default section is missing
 #
 
-# Comment for SECTION_NAME
-[SECTION_NAME]
+# Comment for Section_name
+[Section_name]
 # this is a comment for *.md test@email.com
 *.md test@email.com
 * test@email.com test1@email.com test2@email.com test3@email.com
@@ -33,7 +33,7 @@ WORKSPACE test@email.com test1@email.com test2@email.com test3@email.com
 /www/gitlab/test/path test@email.com
 /ui/components/ test_c@email.com
 .gitlab test@email.com
-/ui test@email.com test1@email.com test2@email.com test3@email.com
+/ui test1@email.com test2@email.com test3@email.com
 /ui/components/ test_a@email.com test_b@email.com
 
 # Build Group
@@ -56,6 +56,20 @@ CODEOWNERS @test/teams/build/admin test@email.com test1@email.com test2@email.co
 /docker/pipeline/ test@email.com
 /release/release_script.sh test@email.com
 
+[SECTION_NAME]
+/ui/lighting/client test@email.com
+/ui/lighting test@email.com
+/ui/components/ test_a@email.com
+/www/ test@email.com
+/www/gitlab/test/path test@email.com
+/ui/components/ test_c@email.com
+.gitlab test@email.com
+/ui test2@email.com test1@email.com test3@email.com
+/ui/components/ test_a@email.com test_b@email.com
+/www/aaa/ test@email.com
+/www/gitlab/test/path/aaa test@email.com
+/ui/components/aaa/ test_c@email.com
+
 [SECURITY]
 # Comment for security
 
@@ -65,6 +79,9 @@ CODEOWNERS @test/teams/build/admin test@email.com test1@email.com test2@email.co
 /ops/terraform/path2/ test@email.com
 
 
+[section_name]
+/ui/lighting test@email.com
+
 [TEST_SECTION]
 # This is a comment for [TEST_SECTION]
 
@@ -73,3 +90,6 @@ CODEOWNERS @test/teams/build/admin test@email.com test1@email.com test2@email.co
 /pipeline/ test@email.com
 /docker/pipeline/ test@email.com
 /release/release_script.sh test@email.com
+
+[Section_Name]
+/ui/lighting/client test@email.com

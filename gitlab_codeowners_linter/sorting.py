@@ -20,3 +20,11 @@ def sort_paths(entry1, entry2):
         return -1
 
     return -1 if (line1 < line2) else 1
+
+
+def sort_section_names(section1, section2):
+    section_name1 = section1.codeowner_section.lower()
+    section_name2 = section2.codeowner_section.lower()
+    if section_name1 == section_name2:
+        return 0
+    return -1 if (section_name1 < section_name2) else 1
