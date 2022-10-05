@@ -11,8 +11,10 @@ tests/resources/existing_paths_input.txt test1@email.com test2@email.com
 /tests/codeowners_linter_tests.py test1@email.com
 /tests/resources/empty_input.txt test1@email.com test2@email.com
 
-[SECURITY]
-tests/resources/existing_paths_input.txt test1@email.com test2@email.com
+[Security]
+tests/resources/existing_paths_autofix.txt test1@email.com test2@email.com
+tests/resources/existing_paths_input.txt test1@email.com test2@email.com test3@email.com
+/tests/resources/existing_paths_autofix.txt test1@email.com test2@email.com
 
 # This is a comment for [SYSTEM]
 [SYSTEM]

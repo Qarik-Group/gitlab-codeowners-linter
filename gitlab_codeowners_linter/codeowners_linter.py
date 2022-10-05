@@ -6,6 +6,7 @@
 #   - there must be no empty lines between paths
 #   - paths in a section must be unique
 #   - paths must exist
+#   - there must be no duplicated sections
 #
 from __future__ import annotations
 

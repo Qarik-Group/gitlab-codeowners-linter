@@ -8,6 +8,7 @@ gitlab-codeowners-linter makes sure that the CODEOWNERS file is formatted respec
   - paths in a section must be unique
   - there must be no empty lines between paths
   - paths must exist
+  - there must not be duplicated sections
 
 The linter can run in check or autofix mode.
 

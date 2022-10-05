@@ -6,6 +6,10 @@ from functools import cmp_to_key
 from pathspec import PathSpec
 
 from gitlab_codeowners_linter.sorting import sort_paths
+from gitlab_codeowners_linter.sorting import sort_section_names
+
+# TODO: if there are duplicated sections, do I want to issue the error message for
+#       that section only once?
 
 
 class CodeownersViolations:
@@ -16,8 +20,8 @@ class CodeownersViolations:
         self.unsorted_paths_in_sections = []
         self.sections_with_duplicate_paths = []
         self.sections_with_non_existing_paths = []
-        self.non_existing_paths = []
-        self.duplicated_sections = False
+        self.non_existing_paths = {}
+        self.duplicated_sections = []
 
 
 def check(codeowners_data):
@@ -27,21 +31,17 @@ def check(codeowners_data):
         return violations
 
     # Are custom section names sorted?
-    if [
-        section.codeowner_section for section in codeowners_data[1:]
-    ] != sorted(
-        section.codeowner_section for section in codeowners_data[1:]
-    ):
+    sort_sections_names_key = cmp_to_key(sort_section_names)
+    if codeowners_data[1:] != sorted(codeowners_data[1:], key=sort_sections_names_key):
         violations.violation_error_messages.append('Sections are not sorted')
         violations.section_names_sorted = True
 
     # Are there duplicated sections?
-    all_sections_name = list(section.codeowner_section.lower()
-                             for section in codeowners_data)
-    if len(set(all_sections_name)) != len(all_sections_name):
+    violations.duplicated_sections = _get_duplicated_sections(codeowners_data)
+    if violations.duplicated_sections != []:
         violations.violation_error_messages.append(
-            'There are duplicated sections')
-        violations.duplicated_sections = True
+            f"The sections {', '.join(map(str, violations.duplicated_sections))} are duplicates",
+        )
 
     # Are there blank lines in sections?
     violations.sections_with_blank_lines = _get_sections_with_blank_lines(
@@ -83,6 +83,13 @@ def _is_codeowners_empty(codeowners_data):
     if all(not section.get_paths() for section in codeowners_data):
         empty = True
     return empty
+
+
+def _get_duplicated_sections(codeowners_data):
+    all_sections_name = list(
+        section.codeowner_section for section in codeowners_data)
+    seen = set()
+    return [x for x in all_sections_name if x.lower() in seen or seen.add(x.lower())]
 
 
 def _get_sections_with_blank_lines(codeowners_data):
@@ -129,7 +136,7 @@ def _get_all_filepaths():
 
 def _get_non_existing_paths(codeowners_data):
     sections_with_non_existing_paths = []
-    non_existing_paths = []
+    non_existing_paths = {}
     files = _get_all_filepaths()
     for section in codeowners_data:
         spec = PathSpec.from_lines(
@@ -143,6 +150,11 @@ def _get_non_existing_paths(codeowners_data):
         if non_existing_paths_in_section:
             sections_with_non_existing_paths.append(
                 section.codeowner_section)
-        non_existing_paths.append(non_existing_paths_in_section)
+        if section.codeowner_section.lower() in non_existing_paths.keys():
+            non_existing_paths[section.codeowner_section.lower()].extend(
+                non_existing_paths_in_section)
+        else:
+            non_existing_paths[section.codeowner_section.lower(
+            )] = non_existing_paths_in_section
 
     return sections_with_non_existing_paths, non_existing_paths
