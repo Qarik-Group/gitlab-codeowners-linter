@@ -69,7 +69,6 @@ def parse_codeowners(file_path):
             comments_block = []
             continue
         if section_regex.search(line):
-            # TODO: handle sections with duplicate names
             # TODO: manage gitlab optional sections, the ones starting with ^
             # TODO: at the moment for any section with a following comment like
             #       [Section]#this is a comment

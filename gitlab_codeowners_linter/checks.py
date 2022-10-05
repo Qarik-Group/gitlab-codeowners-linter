@@ -8,9 +8,6 @@ from pathspec import PathSpec
 from gitlab_codeowners_linter.sorting import sort_paths
 from gitlab_codeowners_linter.sorting import sort_section_names
 
-# TODO: if there are duplicated sections, do I want to issue the error message for
-#       that section only once?
-
 
 class CodeownersViolations:
     def __init__(self):
