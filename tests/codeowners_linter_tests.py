@@ -15,6 +15,7 @@ from gitlab_codeowners_linter.input import get_arguments
 from gitlab_codeowners_linter.parser import CodeownerEntry
 from gitlab_codeowners_linter.parser import CodeownerSection
 from gitlab_codeowners_linter.sorting import sort_paths
+from gitlab_codeowners_linter.sorting import sort_section_names
 
 
 class Test_Functions(unittest.TestCase):
@@ -73,7 +74,70 @@ class Test_Functions(unittest.TestCase):
                 case.expected_no_autofix,
                 no_autofix,))
 
-    def test_sort_function(self):
+    def test_sort_sections_function(self):
+        @dataclass
+        class TestCase:
+            name: str
+            input: list[str]
+            expected: list[str]
+
+        testcases = [
+            TestCase(
+                name='unsorted',
+                input=[
+                    '[BUILD]',
+                    '[SECURITY]',
+                    '[SYSTEM]',
+                    '^[And_a_last_section]',
+                    '^[SYSTEM]',
+                ],
+                expected=[
+                    '^[And_a_last_section]',
+                    '[BUILD]',
+                    '[SECURITY]',
+                    '^[SYSTEM]',
+                    '[SYSTEM]',
+                ],
+            ),
+            TestCase(name='empty_slice', input=[], expected=[]),
+            TestCase(
+                name='already_sorted',
+                input=[
+                    '^[And_a_last_section]',
+                    '[BUILD]',
+                    '[SECURITY]',
+                    '^[SYSTEM]',
+                    '[SYSTEM]',
+                ],
+                expected=[
+                    '^[And_a_last_section]',
+                    '[BUILD]',
+                    '[SECURITY]',
+                    '^[SYSTEM]',
+                    '[SYSTEM]',
+                ],
+            ),
+        ]
+        sort_section_key = cmp_to_key(sort_section_names)
+
+        for case in testcases:
+            data = []
+            actual = data
+            for section in case.input:
+                data.append(CodeownerSection(section, [], []))
+            actual = sorted(data, key=sort_section_key)
+            actual_names = [x.codeowner_section for x in actual]
+            self.assertListEqual(
+                case.expected,
+                actual_names,
+                'failed test {} expected {}, actual {}'.format(
+                    case.name,
+                    case.expected,
+                    actual_names,
+                ),
+            )
+
+    def test_sort_path_function(self):
         @dataclass
         class TestCase:
             name: str
@@ -189,10 +253,10 @@ class Test_Functions(unittest.TestCase):
                 ),
                 expected_check=[
                     'Sections are not sorted',
-                    'The sections SECURITY, security are duplicates',
-                    'The paths in sections __default_codeowner_section__, Security, SYSTEM, SECURITY are not sorted',
+                    'The sections [SECURITY], [security] are duplicates',
+                    'The paths in sections __default_codeowner_section__, [Security], [SYSTEM], [SECURITY] are not sorted',
                     'The sections __default_codeowner_section__ have duplicate paths',
-                    'The sections __default_codeowner_section__, Security, SYSTEM, SECURITY, security have non-existing paths'],
+                    'The sections __default_codeowner_section__, [Security], [SYSTEM], [SECURITY], [security] have non-existing paths'],
                 expected_fix=os.path.join(
                     os.path.dirname(os.path.abspath(__file__)),
                     'resources/existing_paths_autofix.txt',
@@ -268,8 +332,8 @@ class Test_Autofix(unittest.TestCase):
                 ),
                 expected_check=[
                     'Sections are not sorted',
-                    'There are blank lines in the sections __default_codeowner_section__, BUILD, SECURITY',
-                    'The paths in sections __default_codeowner_section__, BUILD, SYSTEM, TEST_SECTION are not sorted',
+                    'There are blank lines in the sections __default_codeowner_section__, [BUILD], [SECURITY]',
+                    'The paths in sections __default_codeowner_section__, [BUILD], [SYSTEM], [TEST_SECTION] are not sorted',
                     'The sections __default_codeowner_section__ have duplicate paths',
                 ],
                 expected_fix=os.path.join(
@@ -285,14 +349,30 @@ class Test_Autofix(unittest.TestCase):
                 ),
                 expected_check=[
                     'Sections are not sorted',
-                    'The sections SECTION_NAME, section_name, Section_Name are duplicates',
-                    'There are blank lines in the sections Section_name, BUILD, SECURITY',
-                    'The paths in sections Section_name, BUILD, SYSTEM, SECTION_NAME, TEST_SECTION are not sorted',
-                    'The sections Section_name, SECTION_NAME have duplicate paths',
+                    'The sections [SECTION_NAME], [section_name], [Section_Name] are duplicates',
+                    'There are blank lines in the sections [Section_name], [BUILD], [SECURITY]',
+                    'The paths in sections [Section_name], [BUILD], [SYSTEM], [SECTION_NAME], [TEST_SECTION] are not sorted',
+                    'The sections [Section_name], [SECTION_NAME] have duplicate paths',
                 ],
                 expected_fix=os.path.join(
                     os.path.dirname(os.path.abspath(__file__)),
                     'resources/no_default_section_autofix.txt',
+                ),
+            ),
+            TestCase(
+                name='optional_sections_not_formatted',
+                input=os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)),
+                    'resources/optional_sections_input.txt',
+                ),
+                expected_check=[
+                    'Sections are not sorted',
+                    'The sections [System], [SYSTEM], [SYSTEM] are duplicates',
+
+                ],
+                expected_fix=os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)),
+                    'resources/optional_sections_autofix.txt',
                 ),
             ),
             TestCase(

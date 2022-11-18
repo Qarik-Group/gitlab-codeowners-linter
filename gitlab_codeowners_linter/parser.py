@@ -44,7 +44,7 @@ def _is_consecutive_blank_line_in_section(codeowners_content):
 
 
 def parse_codeowners(file_path):
-    section_regex = re.compile(r'\[(.*?)\]')
+    section_regex = re.compile(r'(\^)?\[(.*?)\]')
 
     codeowners_content = [CodeownerSection(DEFAULT_SECTION, [], [])]
     comments_block = []
@@ -69,20 +69,16 @@ def parse_codeowners(file_path):
             comments_block = []
             continue
         if section_regex.search(line):
-            # TODO: manage gitlab optional sections, the ones starting with ^
             # TODO: at the moment for any section with a following comment like
             #       [Section]#this is a comment
             #       the comment is ignored without any message to the user.
             #       A solution could be to create a function that scans all the parsed lines for
             #       trailing comments, both on gitlab sections names and on entries, and appends them to
             #       the proper comment space, CodeownerSection.comments or CodeownerEntry.comments
-
             # Here we have a new section
-
             codeowners_content.append(
                 CodeownerSection(
-                    section_regex.search(line).group(
-                        1), comments_block, [],
+                    line.split(']', 1)[0]+']', comments_block, [],
                 ),
             )
             comments_block = []

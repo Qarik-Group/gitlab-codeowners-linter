@@ -1,0 +1,35 @@
+### CODEOWNERS ###
+#
+# This is a test case with issues and optional sections
+#
+
+# this is a comment for * test@email.com test1@email.com test2@email.com
+* test@email.com test1@email.com test2@email.com
+*.md test@email.com
+WORKSPACE test@email.com test1@email.com test2@email.com test3@email.com
+/.pylintrc test@email.com
+# this is a comment for /ui test@email.com
+/ui test@email.com
+/ui/components/ test@email.com test1@email.com test2@email.com test3@email.com
+/ui/lighting test@email.com test1@email.com test2@email.com test3@email.com
+
+^[And_a_last_section]
+/pipeline/ test@email.com test1@email.com test2@email.com test3@email.com
+/release/release_script.sh test@email.com
+
+# Gitlab Groups
+[BUILD]
+.gitlab/.gitlab-ci.yml test@email.com
+.gitlab/ci/ test@email.com test1@email.com test2@email.com test3@email.com
+
+[SECURITY]
+/ops/terraform/path1 @test/teams/admin @test/teams/security/admin
+/ops/terraform/path2/ @test/teams/security/admin
+
+# This is a comment for [SYSTEM]
+^[system]
+/docker/pipeline/ test@email.com test1@email.com test2@email.com test3@email.com
+/go/src/repo/pipeline/ test@email.com test1@email.com test2@email.com test3@email.com
+/ops/terraform/pipeline/ test@email.com
+/pipeline/ test1@email.com test2@email.com test3@email.com test@email.com
+/release/release_script.sh test@email.com
