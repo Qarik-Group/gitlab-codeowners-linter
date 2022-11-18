@@ -32,7 +32,13 @@ def fix(codeowners_data, violations, file_path):
         # and DOCUMENTATION are combined, using the case of the first section
         i = 0
         while i < len(codeowners_data)-1:
-            if codeowners_data[i].codeowner_section.lower() == codeowners_data[i+1].codeowner_section.lower():
+            current_section = codeowners_data[i].codeowner_section.lower()
+            if current_section.startswith('^'):
+                current_section = current_section[1:]
+            next_section = codeowners_data[i+1].codeowner_section.lower()
+            if next_section.startswith('^'):
+                next_section = next_section[1:]
+            if current_section == next_section:
                 codeowners_data[i].comments = codeowners_data[i].comments + \
                     codeowners_data[i+1].comments
                 codeowners_data[i].entries = codeowners_data[i].entries + \
@@ -140,7 +146,7 @@ def _update_codeowners_file(codeowners_data, file_path):
                 for comment_line in section.comments:
                     f.write(f'{comment_line}\n')
             if section.codeowner_section != DEFAULT_SECTION:
-                f.write(f'[{section.codeowner_section}]')
+                f.write(f'{section.codeowner_section}')
             if section.entries:
                 f.write('\n')
                 for entry in section.entries:

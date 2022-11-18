@@ -85,6 +85,8 @@ def _is_codeowners_empty(codeowners_data):
 def _get_duplicated_sections(codeowners_data):
     all_sections_name = list(
         section.codeowner_section for section in codeowners_data)
+    all_sections_name = [x.split('^')[1] if x.startswith(
+        '^') else x for x in all_sections_name]
     seen = set()
     return [x for x in all_sections_name if x.lower() in seen or seen.add(x.lower())]
 
