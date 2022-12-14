@@ -1,0 +1,14 @@
+## This file determines who is marked on merge requests for approvals
+## ...
+## until the comment block is done
+
+[Default Owners]
+## Comments about this section
+* @user1 @user2
+
+[Group-A]
+path1/ @groupa
+path2/ @groupa
+
+[Group-B]
+path3/ @groupb

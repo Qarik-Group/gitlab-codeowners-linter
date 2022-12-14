@@ -387,6 +387,18 @@ class Test_Autofix(unittest.TestCase):
                     'resources/empty_autofix.txt',
                 ),
             ),
+            TestCase(
+                name='issue29',
+                input=os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)),
+                    'resources/issue29_input.txt',
+                ),
+                expected_check=[],
+                expected_fix=os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)),
+                    'resources/issue29_autofix.txt',
+                ),
+            ),
         ]
         for case in testcases:
             actual = os.path.join(
